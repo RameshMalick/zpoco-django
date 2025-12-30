@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZPOCO Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Glory:ital,wght@0,100..800;1,100..800&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Glory', sans-serif;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .animate-fade-in-delay {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.2s forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Hide Scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="glass sticky top-0 z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center gap-6">
+            <a href="/" class="text-2xl font-bold text-gray-800 flex-shrink-0">
+                <span class="text-blue-600">ZPOCO</span> Store
+            </a>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 max-w-xl">
+                <form method="GET" action="{% url 'search' %}" class="w-full relative">
+                    <input type="text" name="q" placeholder="Search for apps & games..."
+                        class="w-full bg-gray-100 rounded-lg pl-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center gap-6 font-medium text-gray-600">
+                <a href="/" class="hover:text-blue-600">Home</a>
+                <a href="{% url 'category_list' 'games' %}" class="hover:text-blue-600">Games</a>
+                <a href="{% url 'category_list' 'apps' %}" class="hover:text-blue-600">Apps</a>
+                <a href="{% url 'category_list' 'ebooks' %}" class="hover:text-blue-600">eBooks</a>
+                <a href="{% url 'category_list' 'worksheets' %}" class="hover:text-blue-600">Worksheets</a>
+            </div>
+
+            <!-- Mobile Menu / Admin -->
+            <div class="flex items-center gap-3">
+                {% if user.is_authenticated %}
+                <a href="{% url 'add_product' %}"
+                    class="hidden md:block text-blue-600 font-bold hover:bg-blue-50 px-3 py-2 rounded-lg transition">+
+                    Sell App</a>
+                <div
+                    class="h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+                    {{ user.username|make_list|first|upper }}
+                </div>
+                <a href="{% url 'logout' %}"
+                    class="text-gray-500 hover:text-red-500 text-sm font-medium ml-2 transition">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-600 font-medium transition">Login</a>
+                <a href="{% url 'signup' %}"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full shadow-md transition transform hover:-translate-y-0.5 text-sm">Sign
+                    Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <span class="font-bold text-gray-800">ZPOCO Store</span>
+                    <p class="text-gray-500 text-sm">&copy; 2025 All rights reserved.</p>
+                </div>
+                <div class="flex gap-6 text-sm text-gray-600">
+                    <a href="{% url 'about' %}" class="hover:text-blue-600">About</a>
+                    <a href="{% url 'contact' %}" class="hover:text-blue-600">Contact</a>
+                    <a href="#" class="hover:text-blue-600">Privacy Policy</a>
+                    <a href="#" class="hover:text-blue-600">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

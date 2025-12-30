@@ -1,0 +1,117 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<div
+    class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-10 mb-12 flex flex-col md:flex-row items-center justify-between shadow-2xl animate-fade-in text-white overflow-hidden relative">
+    <div class="z-10 relative">
+        <h1 class="text-5xl font-bold mb-4 leading-tight">Discover, Download<br>& Learn</h1>
+        <p class="text-xl text-blue-100 mb-8 max-w-lg">Your premium destination for Games, Apps, eBooks, and Worksheets.
+        </p>
+        <button
+            class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold shadow-lg hover:bg-blue-50 transition transform hover:scale-105">
+            Explore Store
+        </button>
+    </div>
+    <div class="mt-8 md:mt-0 relative z-10">
+        <div class="w-64 h-64 bg-white/10 rounded-full blur-3xl absolute -top-10 -right-10"></div>
+        <div class="w-40 h-40 bg-blue-400/20 rounded-full blur-2xl absolute bottom-0 left-0"></div>
+    </div>
+</div>
+
+<!-- Categories -->
+<div class="mb-16 animate-fade-in-delay">
+    <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+        {% for category in categories %}
+        <a href="{% url 'category_list' category.slug %}"
+            class="flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:bg-blue-50 transition transform hover:-translate-y-1 whitespace-nowrap group">
+            <span class="group-hover:text-blue-600 transition">{{ category.icon }}</span>
+            <span class="font-medium text-gray-700 group-hover:text-blue-700 transition">{{ category.name }}</span>
+        </a>
+        {% empty %}
+        <p class="text-gray-500">No categories yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Trending Now -->
+<div class="mb-12">
+    <div class="flex justify-between items-end mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Trending Now</h2>
+        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">View All</a>
+    </div>
+
+    <div class="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 snap-x">
+        {% for product in trending_products %}
+        <a href="{% url 'product_detail' product.id %}" class="min-w-[200px] snap-center block group">
+            <div
+                class="h-64 w-full bg-gray-100 rounded-2xl overflow-hidden mb-4 card-hover relative border border-gray-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}"
+                    class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                {% else %}
+                <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-50">
+                    <span class="text-4xl mb-2">📷</span>
+                    <span class="text-xs font-medium">No Image</span>
+                </div>
+                {% endif %}
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+            </div>
+
+            <h3 class="font-bold text-gray-900 truncate text-lg group-hover:text-blue-600 transition">
+                {{ product.title }}
+            </h3>
+
+            <p class="text-sm text-gray-500 mb-2">{{ product.category.name }}</p>
+
+            <div class="flex items-center gap-2">
+                <span
+                    class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full border border-blue-100">
+                    {% if product.is_free %}Free{% else %}${{ product.price }}{% endif %}
+                </span>
+                <span class="text-xs text-amber-500 font-bold flex items-center">
+                    ★ {{ product.rating }}
+                </span>
+            </div>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 italic pl-4">No trending products yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- New Releases -->
+<div>
+    <div class="flex justify-between items-end mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">New Releases</h2>
+        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">View All</a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {% for product in products %}
+        <a href="{% url 'product_detail' product.id %}"
+            class="card-hover bg-white rounded-2xl overflow-hidden block border border-gray-100">
+            <div class="bg-gray-100 h-48 flex items-center justify-center relative overflow-hidden group">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}"
+                    class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                {% else %}
+                <span class="text-gray-400">No Image</span>
+                {% endif %}
+            </div>
+            <div class="p-5">
+                <h3 class="font-bold text-gray-900 truncate mb-1">{{ product.title }}</h3>
+                <p class="text-sm text-gray-500 mb-3">{{ product.category.name }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                        {% if product.is_free %}Free{% else %}${{ product.price }}{% endif %}
+                    </span>
+                    <span class="text-xs text-gray-400">★ {{ product.rating }}</span>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <p class="col-span-full text-center text-gray-500 py-10">No products found. Add some in Admin!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
