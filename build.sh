@@ -9,3 +9,6 @@ python manage.py collectstatic --no-input
 
 # Apply database migrations
 python manage.py migrate
+
+# Load initial data
+python manage.py loaddata initial_data.json
