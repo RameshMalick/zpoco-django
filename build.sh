@@ -12,3 +12,4 @@ python manage.py migrate
 
 # Load initial data
 python manage.py loaddata initial_data.json
+python manage.py loaddata users.json
